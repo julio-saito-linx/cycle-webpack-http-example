@@ -1,47 +1,56 @@
 import Cycle from '@cycle/core';
-import {div, button, h1, h4, a, makeDOMDriver} from '@cycle/dom';
+import {div, button, h4, p, a, ul, li, makeDOMDriver} from '@cycle/dom';
 import {makeHTTPDriver} from '@cycle/http';
 import './style.css';
 
 function main(sources) {
   const USERS_URL = 'http://jsonplaceholder.typicode.com/users/';
-  const getRandomUser$ = sources.DOM.select('.get-random').events('click')
+  const getAllUsers$ = sources.DOM.select('.get-users').events('click')
     .map(() => {
-      const randomNum = Math.round(Math.random() * 9) + 1;
-      const urlPath = USERS_URL + String(randomNum);
-      /**/console.log('\n>>---------\n urlPath:\n', urlPath, '\n>>---------\n');/* -debug- */
       return {
-        url: urlPath,
+        url: USERS_URL,
         method: 'GET'
       };
     });
 
-  const user$ = sources.HTTP
+  const users$ = sources.HTTP
     .filter(res$ => res$.request.url.indexOf(USERS_URL) === 0)
     .mergeAll()
     .map(res => res.body)
     /**/.do((x) => console.log('body', x))/* -debug- */
     .startWith(null);
 
-  const vtree$ = user$.map(user =>
+  const vtree$ = users$.map(users =>
     div('.container', [
-      div('.users', [
-        button('.get-random', 'Get random user'),
-        user === null ? null : div('.user-details', [
-          h1('.user-name', user.name),
-          h4('.user-email', user.email),
-          a('.user-website', {
-            href: 'http://' + user.website,
-            target: '_blank',
-          }, user.website)
-        ])
+      div('.row', [
+        div('.col-xs-6', [
+          div('.users', [
+            button('.get-users', 'Fetch users'),
+          ]),
+          ul('.users-results', users && users.map(user =>
+            li('.user-details', [
+              a({
+                className: '.user-id',
+                href: '#',
+              }, `${user.name} [id: ${user.id.toString()}]`),
+              // p('.user-email', user.email.toLowerCase()),
+              // a('.user-website', {
+              //   href: 'http://' + user.website,
+              //   target: '_blank',
+              // }, user.website)
+            ])
+          )),
+        ]),
+        div('.col-xs-6', [
+          'TODO: users detail'
+        ]),
       ])
     ])
   );
 
   return {
     DOM: vtree$,
-    HTTP: getRandomUser$
+    HTTP: getAllUsers$
   };
 }
 
