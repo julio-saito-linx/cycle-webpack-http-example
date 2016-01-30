@@ -9,7 +9,7 @@ function main(sources) {
     .map(() => {
       const randomNum = Math.round(Math.random() * 9) + 1;
       const urlPath = USERS_URL + String(randomNum);
-      /**/console.log('\n>>---------\n urlPath:\n', urlPath, '\n>>---------\n');/*-debug-*/
+      /**/console.log('\n>>---------\n urlPath:\n', urlPath, '\n>>---------\n');/* -debug- */
       return {
         url: urlPath,
         method: 'GET'
@@ -20,7 +20,7 @@ function main(sources) {
     .filter(res$ => res$.request.url.indexOf(USERS_URL) === 0)
     .mergeAll()
     .map(res => res.body)
-    /**/.do((x) => console.log('body', x))/*-debug-*/
+    /**/.do((x) => console.log('body', x))/* -debug- */
     .startWith(null);
 
   const vtree$ = user$.map(user =>
