@@ -2,3 +2,21 @@ body {
   margin: 22px 0 0 0;
 }
 
+.tweet-username {
+  margin: 0 10px 0 0;
+  color: #937171;
+}
+
+a {
+  color: #BA949E;
+  text-decoration: none;
+}
+
+p.tweet-text {
+  font-size: 19px;
+  padding: 10px;
+  color: #4C4C4C;
+  font-family: inherit;
+  background-color: #FFFDF5;
+  border: 1px solid #E4D8D8;
+}
