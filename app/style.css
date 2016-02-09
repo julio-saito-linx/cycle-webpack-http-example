@@ -4,11 +4,17 @@ body {
 
 .tweet-username {
   margin: 0 10px 0 0;
-  color: #937171;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.55);
+  font-size: 20px;
+}
+
+.tweet-user-name {
+  margin: 0 10px 0 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.55);
+  font-size: 20px;
 }
 
 a {
-  color: #BA949E;
   text-decoration: none;
 }
 
@@ -19,4 +25,7 @@ p.tweet-text {
   font-family: inherit;
   background-color: #FFFDF5;
   border: 1px solid #E4D8D8;
+  overflow: hidden;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
