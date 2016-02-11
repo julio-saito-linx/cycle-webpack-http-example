@@ -31,6 +31,7 @@
     "@cycle/isolate": "1.2.x",
     "firebase": "^2.4.0",
     "lodash": "^4.2.1",
+    "moment": "^2.11.2",
     "rgb-scale": "0.0.2",
     "rx": "^4.0.6"
   },

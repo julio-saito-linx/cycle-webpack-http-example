@@ -1,30 +1,44 @@
 body {
-  margin: 22px 0 0 0;
+  margin: 30px 0 0 0;
+}
+
+.tweet-header-info {
+  font-size: 16px;
+  margin: 0 3px;
+  color: #909090;
 }
 
 .tweet-username {
   margin: 0 10px 0 0;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.55);
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .tweet-user-name {
   margin: 0 10px 0 0;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.55);
-  font-size: 20px;
+  font-size: 18px;
 }
 
 a {
   text-decoration: none;
 }
 
+.entity-text {
+  margin: 0 10px 0 0;
+}
+
+.entity-expanded_url {
+  display: block;
+}
+
 p.tweet-text {
   font-size: 19px;
-  padding: 10px;
+  padding: 13px;
+  margin: -16px 0px 22px 0px;
   color: #4C4C4C;
   font-family: inherit;
-  background-color: #FFFDF5;
-  border: 1px solid #E4D8D8;
+  background-color: #EFEFEF;
+  border: 1px solid #939393;
+  border-radius: 4px;
   overflow: hidden;
   white-space: pre-wrap;
   word-wrap: break-word;

@@ -1,20 +1,51 @@
 import Rx from 'rx';
 import Cycle from '@cycle/core';
-import {div, p, a, hr, img, makeDOMDriver} from '@cycle/dom';
+import {div, p, a, hr, img, span, makeDOMDriver} from '@cycle/dom';
 import FirebaseDriver from './firebase-driver';
+import moment from 'moment';
 import './style.css';
 
 function main(sources) {
   const tweetList = [];
 
-  const allTweets$ = Rx.Observable.of(require('../fixtures/data.json'));
-  // const allTweets$ = sources.Firebase.startWith(null);
+  // const allTweets$ = Rx.Observable.of(require('../fixtures/data.json'));
+  const allTweets$ = sources.Firebase.startWith(null);
 
-  function getExtendedImages(tweet) {
-    if (tweet.extended_entities && tweet.extended_entities.media && tweet.extended_entities.media.length > 0) {
-      return img({src: tweet.extended_entities.media[0].media_url});
+  function getExtendedProperties(tweet, extendedEntitiesName, extendedEntitiesField) {
+    if (tweet.extended_entities && tweet.extended_entities[extendedEntitiesName] && tweet.extended_entities[extendedEntitiesName].length > 0) {
+      return tweet.extended_entities[extendedEntitiesName].reduce((prev, curr) => {
+        prev.push(img({src: curr[extendedEntitiesField]}));
+        return prev;
+      }, []);
     }
+    return null;
+  }
 
+  function getEntity(tweet, entityName, entityField) {
+    if (tweet.entities &&
+        tweet.entities[entityName] &&
+        tweet.entities[entityName].length > 0) {
+      return tweet.entities[entityName].reduce((prev, curr) => {
+        prev.push(span('.entity-' + entityField, '#' + curr[entityField]));
+        return prev;
+      }, []);
+    }
+    return null;
+  }
+
+  function getEntityLink(tweet, entityName, entityField) {
+    if (tweet.entities &&
+        tweet.entities[entityName] &&
+        tweet.entities[entityName].length > 0) {
+      return tweet.entities[entityName].reduce((prev, curr) => {
+        prev.push(a({
+          className: 'entity-' + entityField,
+          href: curr[entityField],
+          target: '_blank',
+        }, curr[entityField]));
+        return prev;
+      }, []);
+    }
     return null;
   }
 
@@ -24,40 +55,51 @@ function main(sources) {
     }
 
     tweetList.push(
-      div('.col-md-12', [
-        div({
-          className: 'tweet-name',
-          style: {'background': `url(${tweet.user.profile_background_image_url}) right center / cover repeat scroll padding-box padding-box transparent   `},
-        }, [
+      div('.row', [
+        div('.col-sm-1', [
           img({src: tweet.user.profile_image_url}),
-          p('.tweet-user-name', tweet.user.name),
-          p(`${tweet.user.followers_count} (${tweet.user.friends_count}) ${tweet.user.lang}`),
+        ]),
+        div('.col-sm-11', [
+          span('.tweet-user-name', tweet.user.name),
           a({
+            className: 'tweet-username',
             href: `https://twitter.com/${tweet.user.screen_name}`,
             target: '_blank',
-            className: 'tweet-username',
             title: tweet.user.description
           }, `@${tweet.user.screen_name}`),
           a({
+            className: 'tweet-header-info',
             href: `https://twitter.com/${tweet.user.screen_name}/status/${tweet.id_str}`,
             target: '_blank',
-            className: 'tweet-link',
-          }, `${new Date(tweet.created_at).toLocaleTimeString() }`),
-          p('.tweet-text', tweet.text),
-          getExtendedImages(tweet),
+          }, `${moment(new Date(tweet.created_at)).format('HH:mm') }`),
+          span('.tweet-header-info', [`(`]),
+          span('.tweet-header-info', [`${tweet.user.followers_count}`]),
+          span('.tweet-header-info', [`${tweet.user.friends_count}`]),
+          span('.tweet-header-info', [`)`]),
+          span('.tweet-header-info', [`${tweet.user.lang}`]),
+          span('.tweet-header-info', [`${tweet.id}`]),
         ]),
-        hr(),
-      ])
+      ]),
+      div('.row', [
+        div('.col-sm-1', [
+          ''
+        ]),
+        div('.col-sm-11', [
+          p('.tweet-text', tweet.text),
+          getEntity(tweet, 'hashtags', 'text'),
+          getEntityLink(tweet, 'urls', 'expanded_url'),
+          getExtendedProperties(tweet, 'media', 'media_url'),
+        ]),
+      ]),
+      hr(),
     );
 
     return tweetList;
   }
 
   const vtree$ = allTweets$.map(allTweets =>
-    div('.container-fluid', [
-      div('.row', [
-        addTweet(allTweets)
-      ])
+    div('.container', [
+      addTweet(allTweets)
     ])
   );
 
@@ -69,5 +111,4 @@ function main(sources) {
 Cycle.run(main, {
   DOM: makeDOMDriver('#main-container'),
   Firebase: FirebaseDriver('https://afhajksfhdajksfh.firebaseio.com')
-  // HTTP: makeHTTPDriver()
 });
