@@ -22,7 +22,7 @@
     "start": "node server",
     "lint": "eslint app/**/*.js",
     "build": "rimraf dist && npm run lint && NODE_ENV=production webpack --config ./webpack.production.config.js --progress --profile --colors",
-    "publish": "npm run build && surge -p ./dist -d cycle-http.surge.sh"
+    "deploy": "npm run build && surge -p ./dist -d cycle-http.surge.sh"
   },
   "dependencies": {
     "@cycle/core": "6.0.0",

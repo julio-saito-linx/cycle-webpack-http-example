@@ -1,4 +1,4 @@
-import Rx from 'rx';
+// import Rx from 'rx';
 import Cycle from '@cycle/core';
 import {div, p, a, hr, img, span, makeDOMDriver} from '@cycle/dom';
 import FirebaseDriver from './firebase-driver';
@@ -6,13 +6,12 @@ import moment from 'moment';
 import './style.css';
 
 function main(sources) {
-  const tweetList = [];
+  const firebase$ = sources.Firebase.startWith(null);
 
-  // const allTweets$ = Rx.Observable.of(require('../fixtures/data.json'));
-  const allTweets$ = sources.Firebase.startWith(null);
-
-  function getExtendedProperties(tweet, extendedEntitiesName, extendedEntitiesField) {
-    if (tweet.extended_entities && tweet.extended_entities[extendedEntitiesName] && tweet.extended_entities[extendedEntitiesName].length > 0) {
+  function getExtendedPropertiesMedia(tweet, extendedEntitiesName, extendedEntitiesField) {
+    if (tweet.extended_entities &&
+        tweet.extended_entities[extendedEntitiesName] &&
+        tweet.extended_entities[extendedEntitiesName].length > 0) {
       return tweet.extended_entities[extendedEntitiesName].reduce((prev, curr) => {
         prev.push(img({src: curr[extendedEntitiesField]}));
         return prev;
@@ -50,11 +49,7 @@ function main(sources) {
   }
 
   function addTweet(tweet) {
-    if (!tweet) {
-      return null;
-    }
-
-    tweetList.push(
+    return div('.tweet', [
       div('.row', [
         div('.col-sm-1', [
           img({src: tweet.user.profile_image_url}),
@@ -88,20 +83,20 @@ function main(sources) {
           p('.tweet-text', tweet.text),
           getEntity(tweet, 'hashtags', 'text'),
           getEntityLink(tweet, 'urls', 'expanded_url'),
-          getExtendedProperties(tweet, 'media', 'media_url'),
+          getExtendedPropertiesMedia(tweet, 'media', 'media_url'),
         ]),
       ]),
       hr(),
-    );
-
-    return tweetList;
+    ]);
   }
 
-  const vtree$ = allTweets$.map(allTweets =>
-    div('.container', [
-      addTweet(allTweets)
-    ])
-  );
+  const list$ = firebase$
+    .filter((x) => x !== null)
+    .scan((acc, curr) => acc.concat(addTweet(curr)), []);
+
+  const vtree$ = list$.map((all) => {
+    return div('.container', all);
+  });
 
   return {
     DOM: vtree$
