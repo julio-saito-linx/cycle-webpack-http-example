@@ -92,6 +92,9 @@ function main(sources) {
 
   const list$ = firebase$
     .filter((x) => x !== null)
+    .filter((tweet) => tweet.extended_entities &&
+                       tweet.extended_entities.media &&
+                       tweet.extended_entities.media.length > 0)
     .scan((acc, curr) => acc.concat(addTweet(curr)), []);
 
   const vtree$ = list$.map((all) => {

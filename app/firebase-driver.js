@@ -1,5 +1,5 @@
-import Firebase from 'firebase';
-import Rx from 'rx';
+const Firebase = require('firebase');
+const Rx = require('rx');
 
 
 function FirebaseDriver(uri) {
