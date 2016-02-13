@@ -1,7 +1,6 @@
 const Firebase = require('firebase');
 const Rx = require('rx');
 
-
 function FirebaseDriver(uri) {
   return () => Rx.Observable.create((observer) => {
     const _ref = new Firebase(uri);
@@ -25,5 +24,4 @@ function FirebaseDriver(uri) {
     });
   });
 }
-
 export default FirebaseDriver;

@@ -1,19 +1,19 @@
 // import Rx from 'rx';
 import Cycle from '@cycle/core';
 import {div, p, a, hr, img, span, makeDOMDriver} from '@cycle/dom';
-import FirebaseDriver from './firebase-driver';
-import moment from 'moment';
 import './style.css';
+import FirebaseDriver from './firebase-driver';
+const moment = require('moment');
 
 function main(sources) {
   const firebase$ = sources.Firebase.startWith(null);
 
   function getExtendedPropertiesMedia(tweet, extendedEntitiesName, extendedEntitiesField) {
     if (tweet.extended_entities &&
-        tweet.extended_entities[extendedEntitiesName] &&
-        tweet.extended_entities[extendedEntitiesName].length > 0) {
+      tweet.extended_entities[extendedEntitiesName] &&
+      tweet.extended_entities[extendedEntitiesName].length > 0) {
       return tweet.extended_entities[extendedEntitiesName].reduce((prev, curr) => {
-        prev.push(img({src: curr[extendedEntitiesField]}));
+        prev.push(img({ src: curr[extendedEntitiesField] }));
         return prev;
       }, []);
     }
@@ -34,8 +34,8 @@ function main(sources) {
 
   function getEntityLink(tweet, entityName, entityField) {
     if (tweet.entities &&
-        tweet.entities[entityName] &&
-        tweet.entities[entityName].length > 0) {
+      tweet.entities[entityName] &&
+      tweet.entities[entityName].length > 0) {
       return tweet.entities[entityName].reduce((prev, curr) => {
         prev.push(a({
           className: 'entity-' + entityField,
@@ -52,7 +52,7 @@ function main(sources) {
     return div('.tweet', [
       div('.row', [
         div('.col-sm-1', [
-          img({src: tweet.user.profile_image_url}),
+          img({ src: tweet.user.profile_image_url }),
         ]),
         div('.col-sm-11', [
           span('.tweet-user-name', tweet.user.name),
@@ -93,8 +93,8 @@ function main(sources) {
   const list$ = firebase$
     .filter((x) => x !== null)
     .filter((tweet) => tweet.extended_entities &&
-                       tweet.extended_entities.media &&
-                       tweet.extended_entities.media.length > 0)
+      tweet.extended_entities.media &&
+      tweet.extended_entities.media.length > 0)
     .scan((acc, curr) => acc.concat(addTweet(curr)), []);
 
   const vtree$ = list$.map((all) => {
